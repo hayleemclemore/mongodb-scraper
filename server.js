@@ -19,11 +19,17 @@ var app = express();
 //Set up an Express Router
 var router = express.Router();
 
+//Require our routes file pass our router object
+require("./config/routes")(router);
+
 //Designate our public folder as a static directory
 app.use(express.static(__dirname + "/public"));
 
 
 //connect Handlebars to our Express app
+app.engine("handlebars", expressHandlebars({
+    defaultLayout: "main"
+}));
 app.set("view engine", "handlebars");
 
 //use bodyParser in our app
