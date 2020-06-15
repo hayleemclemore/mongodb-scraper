@@ -1,13 +1,16 @@
 $(document).ready(function () {
   var articleContainer = $(".article-container");
-  $(document).on("click", ".btn.save", handleArticleSave);
-  $(document).on("click", ".scrape-new", handleArticleScrape);
 
-  initPage();
+  $(document).on("click", ".scrape-new", articleScrape);
+  $(document).on("click", ".save", articleSave);
 
-  function initPage() {
+  init();
+
+  function init() {
     articleContainer.empty();
     $.get("/api/headlines?saved=false").then(function (data) {
+
+
       if (data && data.length) {
         renderArticles(data);
       } else {
@@ -22,6 +25,7 @@ $(document).ready(function () {
     for (var i = 0; i < articles.length; i++) {
       articlePanels.push(createPanel(articles[i]));
     }
+    articleContainer.append(articlePanels);
   }
 
   function createPanel(article) {
@@ -31,7 +35,7 @@ $(document).ready(function () {
         "<div class='panel-heading'>",
         "<h3>",
         article.headline,
-        "<a class='btn butn-success save'>",
+        "<a class='btn btn-success save'>",
         "Save Article",
         "</a>",
         "</h3>",
@@ -46,29 +50,48 @@ $(document).ready(function () {
     return panel;
   }
 
-  function renderEmpty() {}
+  function renderEmpty() {
+    var emptyAlert = $(
+      [
+        "<div class='alert alert-warning text-center'>",
+        "<h4>No new articles.</h4>",
+        "</div>",
+        "<div class='panel panel-default'>",
+        "<div class 'panel-heading text-center'>",
+        "<h3>What would you like to do?</h3>",
+        "</div>",
+        "<div class='panel-body text-center'>",
+        "<h4><a class='scrape-new'>Scrape New Article</a></h4>",
+        "<h4><a href='/saved'>Visit Saved Articles</a></h4>",
+        "</div>",
+        "</div>",
+      ].join("")
+    );
+    articleContainer.append(emptyAlert);
+  }
 
-  function handleArticleSave() {
-      var articleToSave = $(this).parents(".panel").data();
-      articleToSave.saved = true;
-    
+  function articleSave() {
+    var articleToSave = $(this).parents(".panel").data();
+    articleToSave.saved = true;
+
+
     $.ajax({
-        method: "PATCH",
-        url: "/api/headlines",
-        data: articleToSave
-    })
-    .then(function(data) {
-        if(data.ok) {
-            initPage();
-        }
+      method: "PATCH",
+      url: "/api/headlines",
+      data: articleToSave,
+    }).then(function (data) {
+      if (data.ok) {
+        init();
+      }
     });
-}
+  }
 
-function handleArticleScrape() {
-    $.get("/api/fetch")
-    .then(function(data) {
-        initPage();
-        bootbox.alert("<h3 class='text-center m-top-80'>" + data.message + "<h3>");
+  function articleScrape() {
+    $.get("/api/fetch").then(function (data) {
+      init();
+      bootbox.alert(
+        "<h3 class='text-center m-top-80'>" + data.message + "</h3>"
+      );
     });
-}
+  }
 });
