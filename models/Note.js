@@ -8,12 +8,9 @@ var noteSchema = new schema({
         ref: "Headline"
     },
     date: String,
-    noteText: {
-        type: Boolean,
-        default: false
-    }
+    noteText: String
 });
 
-var Headline = mongoose.model("Headline", headlineSchema);
+var Note = mongoose.model("Note", noteSchema);
 
-module.exports = Headline;
+module.exports = Note;
