@@ -136,4 +136,30 @@ $(document).ready(function () {
 
     $(".note-container").append(notesToRender);
   }
+
+  function handleNoteSave() {
+      var noteData;
+      var newNote = $(".bootbox-body textarea").val().trim();
+      if (newNote) {
+          noteData = {
+            _id: $(this).data("article")._id,
+            noteText: newNote
+          };
+          $.post("/api/notes", noteData).then(function() {
+              bootbox.hideAll();
+          });
+      }
+  }
+  function handleNoteDelete() {
+    var noteToDelete = $(this).data("_id");
+
+    $.ajax({
+      method: "DELETE",
+      url: "/api/notes/" + noteToDelete,
+    }).then(function() {
+      bootbox.hideAll();
+    });
+  }
+
+
 });

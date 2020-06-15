@@ -11,7 +11,7 @@ var axios = require("axios");
 var cheerio = require("cheerio");
 
 //Set up port to be either the host's designated port, or 3000
-var PORT = process.env.PORT || 3000;
+var PORT = process.env.PORT || 3001;
 
 //Initiate Express App
 var app = express();
@@ -49,7 +49,7 @@ mongoose.connect(db, function(error) {
         console.log(error);
     }
     else {
-        console.log("mongoose connection is successful");ç
+        console.log("mongoose connection is successful");
     }
 })
 
