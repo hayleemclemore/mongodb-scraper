@@ -22,6 +22,10 @@
         <h1>Saved Articles</h1>
         <p>Your Saved Articles</p>
     </div>
+       {{#each data}}
+        <h3>{{headline}}</h3>
+        <p>{{summary}}</p>
+        {{/each}}
 </div>
 <div class="container-fluid article-container">
 </div>

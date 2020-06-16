@@ -3,25 +3,30 @@
 // Require request and cheerio, making our scrapes possible
 var request = require("request");
 var cheerio = require("cheerio");
+var axios = require("axios");
 
 
 var scrape = function (cb) {
-    request("http://www.nytimes.com", function(err, res, body){
-        var $ = cheerio.load(body)
+    
+    return axios.get("https://www.nytimes.com").then(function(res){
+        var $ = cheerio.load(res.data)
 
         var articles = [];
 
-        $(".theme-summary").each(function(i, element) {
-            var head = $(this).children(".story-heading").text().trim();
-            var sum = $(this).children(".summary").text().trim();
+        $(".assetWrapper").each(function(i, element) {
+            console.log(element)
+            var head = $(this).find("h2").text().trim();
+            var url = $(this).find("a").text().trim();
+            var sum = $(this).find("p").text().trim();
 
-            if(head && sum)
+            if(head && url && sum)
             var headNeat = head.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
             var sumNeat = sum.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
 
-            var dateToAdd = {
+            var dataToAdd = {
                 headline: headNeat,
-                summary: sumNeat
+                summary: sumNeat,
+                url: "https://www.nytimes.com" + url
             };
             articles.push(dataToAdd)
         });

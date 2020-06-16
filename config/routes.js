@@ -1,79 +1,81 @@
 var scrape = require("../scripts/scrape");
 var headlinesController = require("../controllers/headlines");
 var notesController = require("../controllers/notes");
+var Headline = require("../models/Headline");
 
+module.exports = function (router) {
+  router.get("/", function (req, res) {
+    res.render("home");
+  });
 
-module.exports = function(router) {
-    router.get("/", function(req, res) {
-        res.render("home");
+  router.get("/saved", function (req, res) {
+    Headline.find({ saved: true }).then(function (data) {
+        console.log(data)
+      res.render("saved", { data });
     });
+  });
 
-    router.get("/saved", function(req, res) {
-        res.render("saved");
-      });
-      router.get("/api/fectch", function(req, res) {
-          headlinesController.fetch(function(err, docs) {
-              if (!docs || docs.insertedCount === 0) {
-                  res.json({
-                      message: "No new articles today. Check back tomorrow!"
-                  });
-              }
-              else {
-                  res.json({
-                      message: "Added " + docs.insertedCount + " new articles!"
-                  })
-              }
-          })
-      });
-      router.get("/api/headlines", function(req, res) {
-          var query = {};
-          if(req.query.saved) {
-              query  = req.query;
-          }
-
-          headlinesController.get(query, function(date) {
-              res.json(data);
-          });
-      });
-
-      router.delete("/api/headlines/:id", function(req, res) {
-        var query = {};
-        query._id = req.params.id;
-        headlinesController.delete(query, function(err, data) {
-            res.json(data);
+  router.get("/api/fetch", function (req, res) {
+    headlinesController.fetch(function (err, docs) {
+      console.log(docs);
+      if (!docs || docs.insertedCount === 0) {
+        res.json({
+          message: "No new articles today. Check back tomorrow!",
         });
-    });
-
-    router.patch("/api/headlines", function(req, res) {
-        headlinesController.update(req.body, function(err, data) {
-            res.json(data);
+      } else {
+        res.json({
+          message: "Added " + docs.insertedCount + " new articles!",
         });
+      }
     });
+  });
+  router.get("/api/headlines", function (req, res) {
+    var query = {};
+    if (req.query.saved) {
+      query = req.query;
+    }
 
-    router.patch("/api/notes/:headlines_id?", function(req, res) {
-        var query = {};
-        if (req.params.headline_id) {
-            query._id = req.params.headline_id;
-        }
-
-        notesController.get(query, function(err, data) {
-            res.json(data);
-        });
+    headlinesController.get(query, function (data) {
+      res.json(data);
     });
+  });
 
-    router.delete("/api/notes/:id", function(req, res) {
-        var query = {};
-        query._id = req.params.id;
-        notesController.delete(query, function(err, data) {
-            res.json(data);
-        });
+  router.delete("/api/headlines/:id", function (req, res) {
+    var query = {};
+    query._id = req.params.id;
+    headlinesController.delete(query, function (err, data) {
+      res.json(data);
     });
+  });
 
-    router.post("/api/notes", function(req, res) {
-        notesController.save(req.body, function(err, data) {
-            res.json(data);
-        });
+  router.patch("/api/headlines", function (req, res) {
+    headlinesController.update(req.body, function (err, data) {
+      res.json(data);
     });
+  });
 
+  router.patch("/api/notes/:headlines_id?", function (req, res) {
+    var query = {};
+    if (req.params.headline_id) {
+      query._id = req.params.headline_id;
+    }
 
-}
+    notesController.get(query, function (err, data) {
+      res.json(data);
+    });
+  });
+
+  router.delete("/api/notes/:id", function (req, res) {
+    var query = {};
+    query._id = req.params.id;
+    notesController.delete(query, function (err, data) {
+      res.json(data);
+    });
+  });
+
+  router.post("/api/notes", function (req, res) {
+    notesController.save(req.body, function (err, data) {
+      res.json(data);
+    });
+  });
+};

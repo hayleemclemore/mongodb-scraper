@@ -87,6 +87,7 @@ $(document).ready(function () {
   }
 
   function articleScrape() {
+    console.log("I was clicked!")
     $.get("/api/fetch").then(function (data) {
       init();
       bootbox.alert(
