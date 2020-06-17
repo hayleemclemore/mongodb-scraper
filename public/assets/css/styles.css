@@ -7,6 +7,9 @@ body {
     background:blue;
 }
 
+.btn-outline {
+    border:2px solid green;
+}
 .footer {
     position: absolute;
     bottom: 0;
